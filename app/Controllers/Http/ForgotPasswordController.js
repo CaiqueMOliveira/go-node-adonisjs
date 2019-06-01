@@ -47,7 +47,9 @@ class ForgotPasswordController {
       const foundUser = await User.findBy('token', token)
 
       if (!foundUser) {
-        return response.status(404).send({ message: 'invalid token' })
+        return response
+          .status(404)
+          .send({ error: { message: 'invalid token' } })
       }
 
       const tokenHasBeenExpired = moment()
@@ -67,8 +69,9 @@ class ForgotPasswordController {
       await foundUser.save()
     } catch (error) {
       return response.status(error.status).send({
-        message: 'Something went wrong while resetting your password!',
-        rawError: error.message
+        error: {
+          message: 'Something went wrong while resetting your password!'
+        }
       })
     }
   }
