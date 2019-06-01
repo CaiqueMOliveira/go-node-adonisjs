@@ -7,6 +7,18 @@ const Helpers = use('Helpers')
  * Resourceful controller for interacting with files
  */
 class FileController {
+  async show ({ response, params }) {
+    try {
+      const foundFile = await File.findOrFail(params.fileId)
+
+      return response.download(Helpers.tmpPath(`uploads/${foundFile.rawName}`))
+    } catch (error) {
+      return response.status(error.status).send({
+        error: { message: 'Something went wrong while getting the file' }
+      })
+    }
+  }
+
   async store ({ request, response }) {
     try {
       if (!request.file('file')) return
