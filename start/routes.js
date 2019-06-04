@@ -11,3 +11,5 @@ Route.put('password', 'ForgotPasswordController.update')
 
 Route.get('files/:fileId', 'FileController.show')
 Route.post('files', 'FileController.store')
+
+Route.resource('project', 'ProjectControoler').apiOnly()
