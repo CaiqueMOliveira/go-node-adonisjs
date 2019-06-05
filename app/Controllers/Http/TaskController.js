@@ -1,8 +1,6 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Task = use('App/Models/Task')
 
 /**
  * Resourceful controller for interacting with tasks
@@ -12,81 +10,80 @@ class TaskController {
    * Show a list of all tasks.
    * GET tasks
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-  }
+  async index ({ params }) {
+    const foundTasks = await Task.query()
+      .where('project_id', params.project_id)
+      .with('user')
+      .fetch()
 
-  /**
-   * Render a form to be used for creating a new task.
-   * GET tasks/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    return foundTasks
   }
 
   /**
    * Create/save a new task.
    * POST tasks
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request, params }) {
+    const newTaskToBeCreated = request.only([
+      'title',
+      'description',
+      'due_date',
+      'file_id',
+      'user_id'
+    ])
+
+    const newTask = await Task.create({
+      ...newTaskToBeCreated,
+      project_id: params.project_id
+    })
+
+    return newTask
   }
 
   /**
    * Display a single task.
    * GET tasks/:id
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show ({ params }) {
+    const foundTask = await Task.findOrFail(params.id)
 
-  /**
-   * Render a form to update an existing task.
-   * GET tasks/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    return foundTask
   }
 
   /**
    * Update task details.
    * PUT or PATCH tasks/:id
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params, request }) {
+    const foundTask = await Task.findOrFail(params.id)
+
+    const taskDataToBeUpdated = request.only([
+      'title',
+      'description',
+      'due_date',
+      'file_id',
+      'user_id'
+    ])
+
+    await foundTask.merge(taskDataToBeUpdated)
+
+    await foundTask.save()
+
+    return foundTask
   }
 
   /**
    * Delete a task with id.
    * DELETE tasks/:id
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params }) {
+    const foundTask = await Task.findOrFail(params.id)
+    await foundTask.delete()
   }
 }
 
