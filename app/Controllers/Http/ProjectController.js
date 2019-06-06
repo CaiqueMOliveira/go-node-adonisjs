@@ -11,10 +11,12 @@ class ProjectController {
    * GET projects
    *
    */
-  async index () {
+  async index ({ request }) {
+    const { page } = request.get()
     const foundProjects = await Project.query()
       .with('user')
-      .fetch()
+      .paginate(page)
+
     return foundProjects
   }
 
