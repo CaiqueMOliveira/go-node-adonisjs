@@ -22,6 +22,8 @@ Route.group(() => {
     .apiOnly()
     .validator(new Map([[['project.store'], ['Project']]]))
 
+  Route.get('users', 'UserController.index')
+
   Route.resource('project.task', 'TaskController')
     .apiOnly()
     .validator(new Map([[['project.task.store'], ['Task']]]))
