@@ -4,6 +4,15 @@
 const Model = use('Model')
 
 class Task extends Model {
+  static boot () {
+    super.boot()
+    this.addHook('afterCreate', 'TaskHook.sendNewTaskMailOnCreateNewTask')
+    this.addHook(
+      'beforeUpdate',
+      'TaskHook.sendNewTaskMailOnUpdateResponsibleUser'
+    )
+  }
+
   project () {
     return this.belongsTo('App/Models/Project')
   }
