@@ -15,7 +15,7 @@ class UserController {
       'password'
     ])
 
-    const newCreatedUser = await User.create(userDataForInsertingNewOne)
+    const newCreatedUser = await User.creaste(userDataForInsertingNewOne)
 
     return newCreatedUser
   }

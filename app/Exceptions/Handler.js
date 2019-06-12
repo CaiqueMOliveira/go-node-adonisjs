@@ -3,6 +3,8 @@
 const Youch = use('youch')
 const Env = use('Env')
 const BaseExceptionHandler = use('BaseExceptionHandler')
+const Raven = require('raven')
+const Config = use('Config')
 
 /**
  * This class handles all exceptions thrown during
@@ -47,7 +49,8 @@ class ExceptionHandler extends BaseExceptionHandler {
    * @return {void}
    */
   async report (error, { request }) {
-    console.log(error.message)
+    Raven.config(Config.get('services.sentry.dsn'))
+    Raven.captureException(error)
   }
 }
 
