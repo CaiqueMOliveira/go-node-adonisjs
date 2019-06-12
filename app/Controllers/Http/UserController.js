@@ -1,5 +1,6 @@
 'use strict'
 
+const Database = use('Database')
 const User = use('App/Models/User')
 
 class UserController {
@@ -15,11 +16,18 @@ class UserController {
       'password'
     ])
 
-    const newCreatedUser = await User.create(userDataForInsertingNewOne)
+    const transaction = await Database.beginTransaction()
+
+    const newCreatedUser = await User.create(
+      userDataForInsertingNewOne,
+      transaction
+    )
 
     const addresses = request.input('addresses')
 
-    await newCreatedUser.addresses().createMany(addresses)
+    await newCreatedUser.addresses().createMany(addresses, transaction)
+
+    await transaction.commit()
 
     return newCreatedUser
   }
